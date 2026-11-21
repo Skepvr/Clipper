@@ -2352,9 +2352,9 @@ def apple_search(term, country="us", limit=25):
             for n, x in enumerate(r.json().get("results", []), 1) if x.get("previewUrl")]
 
 
-def free_music_search(term, limit=25):
+def free_music_search(term, limit=20):
     """Full-length tracks with a free licence that allows commercial use (Openverse, no key needed) - far less likely to get a post muted or claimed."""
-    r = requests.get("https://api.openverse.org/v1/audio/", params={"q": term, "page_size": limit, "license_type": "commercial", "category": "music"}, timeout=20,
+    r = requests.get("https://api.openverse.org/v1/audio/", params={"q": term, "page_size": min(20, int(limit)), "license_type": "commercial", "category": "music"}, timeout=20,
                      headers={"User-Agent": "ClipStudio/1.0"}); r.raise_for_status()
     out = []
     for n, x in enumerate(r.json().get("results", []), 1):
@@ -6032,9 +6032,7 @@ class App:
     def _show_settings(self, on):
         self.settings.is_open = bool(on)
         try:
-            if on:
-                self.settings.body.pack(fill="x", padx=(10, 0), pady=(2, 4))
-                self.settings.box.pack(fill="x", padx=12, pady=6, after=self.set_btn.master)
+            if on: self.settings.box.pack(fill="x", padx=12, pady=6, after=self.set_btn.master)
             else: self.settings.box.pack_forget()
             self.set_btn.config(bg=PURPLE if on else PANEL, fg="white" if on else FG)
         except Exception: pass
